@@ -18,6 +18,7 @@ void task1() {
     cout << " Calculation of expressions using bitwise operations  \n";
 }
 
+
 void task2()
 {
     // Шифрування даних з використання побітових операцій 

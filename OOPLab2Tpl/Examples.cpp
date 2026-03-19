@@ -6,8 +6,8 @@
 using namespace std;
 #include <clocale>
 #include <string.h>
-#if !defined(VS_CODE)
-	#include <Windows.h>
+#if !defined(VS_CODE)	
+#include <Windows.h>
 #endif
 #include "Examples.h"
 enum  ConsoleColor : unsigned int
