@@ -125,43 +125,181 @@ void My_EncryptionU(std::string text, TextCode OutCoding[128])
 		OutCoding[i].bitp = r ^ t;
 	}
 }
+int my_decryption(unsigned short InCoding[128], char OutS[128]) { 
+	unsigned char c;
+	unsigned short r, t, i, b, p, w;
+	short j;
+
+	// Очищуємо вихідний масив (заповнюємо нулями, щоб рядок коректно завершувався)
+	for (i = 0; i < 129; i++) {
+		OutS[i] = 0;
+	}
+
+	for (i = 0; i < 128; i++) {
+		r = InCoding[i];
+		t = r & 0b0111111111111111; // 0x7FFF
+		p = (r & 0b1000000000000000) >> 15; // 0x8000
+		w = 1;
+		b = 0;
+		for (j = 0; j < 16; j++) {
+			if (t & w) {
+				if (b == 0) b = 1; else b = 0;
+			}
+			w <<= 1;
+		}
+		if (p != b) return -i;
+		t = r & 0b0000000000001111; // 0x000F
+		t <<= 4;
+		w = r & 0b0111100000000000; // 0x7800
+		w >>= 11;
+		unsigned char c = t | w;
+		unsigned short pos = r & 0b0000011111110000; // 0x07F0
+		pos >>= 4;
+		OutS[pos] = c;
+	}
+
+	return 1; 
+}
+
+void TaskTask_4()
+{
+	long long x, y, s_1, s_2;
+	cout << "Приклад обчислення виразу використовуючи тiльки побiтовi операцiї.\n";
+	cout << "Вираз : s = (20 * y - x * 120) / 32 + (x + 32 * y) / 128 + (x + y) % 16\n";
+	cout << "Введiть x: \n";
+	cin >> x;
+	cout << "Введiть y: \n";
+	cin >> y;
+
+	auto st = cin.rdstate();
+	if (st != cin.goodbit) {
+		cin.clear(); cout << " error \n"; cin.get(); cin.get(); cin.get(); cin.get();
+		return;
+	}
+	s_1 = (20 * y - x * 120) / 32 + (x + 32 * y) / 128 + (x + y) % 16;
+	s_2 = ((((y << 4) + (y << 2)) - ((x << 7) - (x << 3))) >> 5) + ((x + (y << 5)) >> 7) + ((x + y) & 15);
+	cout << "\nx=" << x << "\ny=" << y << "\ns_1=" << s_1 << "\ns_2=" << s_2 << endl;
+	cin.get();
+	cin.get();
+	return;
+}
+
 
 
 
 	int main() {
 		SetConsoleCP(1251);
 		SetConsoleOutputCP(1251);
-		// Тестовий рядок (менше 128 символів, щоб перевірити доповнення пробілами)
-		std::string myText = "Лабораторна робота №1";
-		unsigned short encryptedArray[128];
-		TextCode encryptedStructArray[128];
 
-		// Викликаємо нашу функцію шифрування
-		my_encryption(myText, encryptedArray);
+		int choice; // Змінна для зберігання вибору користувача в головному меню
+		do {
+			std::cout << "\n================ ГОЛОВНЕ МЕНЮ ================\n";
+			std::cout << "1. Обчислення виразу з використанням побітових операцій  \n";
+			std::cout << "2. Шифрування тексту та подальше дешифрування\n";
+			std::cout << "3. Шифрування тексту (за допомогою структури) та подальше дешифрування\n";
+			std::cout << "4. Завдання 4 (Обчислення виразу з використанням побітових операцій)\n";
+			std::cout << "0. Вихід з програми\n";
+			std::cout << "==============================================\n";
+			std::cout << "Ваш вибір: ";
+			std::cin >> choice; // Зчитуємо вибір користувача
 
-		std::cout << "Початковий текст: \"" << myText << "\"\n";
-		std::cout << "Зашифровані дані (перші 20 символів у шістнадцятковому форматі):\n";
-		std::cout << "1 Спосіб (без структур):\n";
+			std::cout << "\n"; // Порожній рядок для краси
 
-		// Виводимо результат для перевірки (у HEX форматі, щоб було видно структуру бітів)
-		for (int i = 0; i < 20; i++) {
-			std::cout << std::hex << std::uppercase << std::setw(4) << std::setfill('0')
-				<< encryptedArray[i] << " ";
-		}
-		std::cout << "\n";
+			switch (choice) { // Виконуємо відповідну функцію залежно від вибору користувача
+			case 1:
+				std::cout << "1 Завдання\n";
+				Task_1();
+				break;
+			case 2: {
+				std::cout << "2 Завдання\n";
+				std::string myText;
+				std::cout << "Введіть текст для шифрування (до 128 символів): ";
+				std::cin.ignore(); 
+				std::getline(std::cin, myText); 
+				unsigned short encryptedArray[128];
+				TextCode encryptedStructArray[128];
+				my_encryption(myText, encryptedArray);
 
-		// Викликаємо нашу функцію шифрування
-		My_EncryptionU(myText, encryptedStructArray);
-		std::cout << "2 Спосіб (за допомогою структури):\n";
-		for (int i = 0; i < 20; i++) {
-			unsigned short outValue;
-			// Копіюємо пам'ять структури у звичайне число для виведення на екран
-			memcpy(&outValue, &encryptedArray[i], sizeof(unsigned short));
-			std::cout << std::hex << std::uppercase << std::setw(4) << std::setfill('0')
-				<< outValue << " ";
-		}
-		std::cout << "\n";
+				std::cout << "Початковий текст: \"" << myText << "\"\n";
+				std::cout << "1 Спосіб:\n";
+				std::cout << "Зашифровані дані:\n";
 
+				
+				for (int i = 0; i < myText.length(); i++) {
+					std::cout << std::hex << std::uppercase << std::setw(4) << std::setfill('0')
+						<< encryptedArray[i] << " ";
+				}
+				std::cout << "\n";
+
+				char decryptedText[129]; // +1 для нуль-термінатора
+
+				int result = my_decryption(encryptedArray, decryptedText);
+
+				if (result == 1) {
+					std::cout << "Текст успішно розшифровано:\n";
+					std::cout << decryptedText << "\n";
+				}
+				else {
+					std::cout << "Помилка розшифрування! Дані пошкоджено на індексі: " << -result << "\n";
+				}
+				std::cout << "\n";
+
+				break;
+			}
+			case 3: {
+				std::cout << "3 Завдання\n";
+				std::string myText;
+				std::cout << "Введіть текст для шифрування (до 128 символів): ";
+				std::cin.ignore(); // Очищуємо буфер від 'Enter', що залишився після вибору в меню
+				std::getline(std::cin, myText); // Зчитуємо весь рядок разом із пробілами
+				unsigned short encryptedArray[128];
+				TextCode encryptedStructArray[128];
+				My_EncryptionU(myText, encryptedStructArray);
+				std::cout << "2 Спосіб (за допомогою структури):\n";
+				std::cout << "Зашифровані дані:\n";
+				for (int i = 0; i < myText.length(); i++) {
+					unsigned short outValue;
+					// Копіюємо пам'ять структури у звичайне число для виведення на екран
+					memcpy(&outValue, &encryptedStructArray[i], sizeof(unsigned short));
+					std::cout << std::hex << std::uppercase << std::setw(4) << std::setfill('0')
+						<< outValue << " ";
+				}
+				std::cout << std::dec << "\n\n";
+
+				unsigned short tempArray[128];
+				for (int i = 0; i < myText.length(); i++) {
+					memcpy(&tempArray[i], &encryptedStructArray[i], sizeof(unsigned short));
+				}
+				char decryptedText[129];
+				int result = my_decryption(tempArray, decryptedText);
+
+				if (result == 1) {
+					// Обрізаємо зайві пробіли (щоб лапки не відлітали)
+					int len = strlen(decryptedText);
+					while (len > 0 && decryptedText[len - 1] == ' ') {
+						decryptedText[len - 1] = '\0';
+						len--;
+					}
+					std::cout << "Текст успішно розшифровано:\n\"" << decryptedText << "\"\n";
+				}
+				else {
+					std::cout << "Помилка розшифрування на індексі: " << -result << "\n";
+				}
+				break;
+			}
+			case 4: {
+				std::cout << "4 Завдання\n";
+				TaskTask_4();
+				break;
+			}
+			case 0:
+				std::cout << "Роботу завершено.\n";
+				break;
+			default:
+				std::cout << "Помилка: Невірний вибір. Введіть число від 0 до 3.\n";
+			}
+		} while (choice != 0);
+	
 		return 0;
 
 	}
