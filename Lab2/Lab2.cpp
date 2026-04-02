@@ -65,14 +65,14 @@ void my_encryption (std::string text, unsigned short OutCoding[128]) {
 	for (i = 0; i < 128; i++) {
 		r = 0;      // Тут будемо формувати наші 16 бітів (початково всі нулі)
 		c = text[i];             
-		t = c;                  
+		t = c;                 
 		r |= (t >> 4); 
-		r |= (i << 4);
+		r |= (i << 4); 
 		t = c;
-		r |= ((t & 0x0F) << 11);
+		r |= ((t & 0x0F) << 11); 
 		t = 1;
 		b = 0;
-		for (j = 0; j < 16; j++)         
+		for (j = 0; j < 16; j++)  // обчислення біта парності для символу та позиції        
 		{
 			if (r & t) {
 				if (b == 0) b = 1; else b = 0;
