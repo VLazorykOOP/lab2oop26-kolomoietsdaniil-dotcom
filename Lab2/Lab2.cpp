@@ -125,7 +125,8 @@ void My_EncryptionU(std::string text, TextCode OutCoding[128])
 		OutCoding[i].bitp = r ^ t;
 	}
 }
-int my_decryption(unsigned short InCoding[128], char OutS[128]) { 
+
+int my_decryption(unsigned short InCoding[128], char OutS[129]) { 
 	unsigned char c;
 	unsigned short r, t, i, b, p, w;
 	short j;
@@ -214,8 +215,8 @@ void TaskTask_4()
 				std::cout << "2 Завдання\n";
 				std::string myText;
 				std::cout << "Введіть текст для шифрування (до 128 символів): ";
-				std::cin.ignore(); 
-				std::getline(std::cin, myText); 
+				std::cin.ignore();
+				std::getline(std::cin, myText);
 				unsigned short encryptedArray[128];
 				TextCode encryptedStructArray[128];
 				my_encryption(myText, encryptedArray);
@@ -224,20 +225,26 @@ void TaskTask_4()
 				std::cout << "1 Спосіб:\n";
 				std::cout << "Зашифровані дані:\n";
 
-				
+
 				for (int i = 0; i < myText.length(); i++) {
 					std::cout << std::hex << std::uppercase << std::setw(4) << std::setfill('0')
 						<< encryptedArray[i] << " ";
 				}
-				std::cout << "\n";
+				std::cout << std::dec << "\n\n";
 
-				char decryptedText[129]; // +1 для нуль-термінатора
+
+				char decryptedText[129]; 
 
 				int result = my_decryption(encryptedArray, decryptedText);
 
 				if (result == 1) {
-					std::cout << "Текст успішно розшифровано:\n";
-					std::cout << decryptedText << "\n";
+					// Обрізаємо зайві пробіли (щоб лапки не відлітали)
+					int len = strlen(decryptedText);
+					while (len > 0 && decryptedText[len - 1] == ' ') {
+						decryptedText[len - 1] = '\0';
+						len--;
+					}
+					std::cout << "Текст успішно розшифровано:\n\"" << decryptedText << "\"\n";
 				}
 				else {
 					std::cout << "Помилка розшифрування! Дані пошкоджено на індексі: " << -result << "\n";
@@ -252,7 +259,11 @@ void TaskTask_4()
 				std::cout << "Введіть текст для шифрування (до 128 символів): ";
 				std::cin.ignore(); // Очищуємо буфер від 'Enter', що залишився після вибору в меню
 				std::getline(std::cin, myText); // Зчитуємо весь рядок разом із пробілами
-				unsigned short encryptedArray[128];
+
+				if (myText.length() > 128) {
+					myText = myText.substr(0, 128);
+				}
+
 				TextCode encryptedStructArray[128];
 				My_EncryptionU(myText, encryptedStructArray);
 				std::cout << "2 Спосіб (за допомогою структури):\n";
@@ -267,14 +278,15 @@ void TaskTask_4()
 				std::cout << std::dec << "\n\n";
 
 				unsigned short tempArray[128];
-				for (int i = 0; i < myText.length(); i++) {
+				
+				for (int i = 0; i < 128; i++) {
 					memcpy(&tempArray[i], &encryptedStructArray[i], sizeof(unsigned short));
 				}
+
 				char decryptedText[129];
 				int result = my_decryption(tempArray, decryptedText);
 
 				if (result == 1) {
-					// Обрізаємо зайві пробіли (щоб лапки не відлітали)
 					int len = strlen(decryptedText);
 					while (len > 0 && decryptedText[len - 1] == ' ') {
 						decryptedText[len - 1] = '\0';
